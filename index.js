@@ -45,27 +45,32 @@ const fs = require('fs');
             choices: ['yes', 'no'],
         },
 ])
-//   .then((data) => {
-//     if (data.listenChoice === 'yes') {
-//         inquirer
-//         .prompt({
-//             name: 'stream',
-//             type: 'input',
-//             message: 'What stream service do you use?',
-//         }).then(function(data){
-//             return console.log(data)
-//         })
-//         } else {
-//         inquirer
-//         .prompt({
-//             name: 'nonStream',
-//             type: 'input',
-//             message: 'How do you listen to music?',
-//         })
-//         }
-// })
-.then((data) => {
-    fs.writeFileSync('index.html', musicRender(data))
+.then(async (data) => {
+
+   if (data.listenChoice === 'yes') {
+      await inquirer
+        .prompt({
+            name: 'stream',
+            type: 'input',
+            message: 'What stream service do you use?',
+        })
+        .then((data) => {
+           const stream = data.stream
+          return console.log(stream);
+        })
+        } else {
+        await inquirer
+        .prompt({
+            name: 'nonStream',
+            type: 'input',
+            message: 'How do you listen to music?',
+        })
+        .then((data) => {
+            const nonStream = data.nonStream
+            return console.log(nonStream);
+        })
+        }
+     fs.writeFileSync('index.html', musicRender(data))
 })
 .catch((error) => {
     if (error.isTtyError) {
@@ -77,7 +82,7 @@ const fs = require('fs');
 
 // then i am returned with a html that answers all the questions
 // html will be a detailed about me about the subjects music and music taste 
-const musicRender = ({yourName, born, genre, genreCurrent, artist, song, streaming, nonStreaming}) => 
+const musicRender = ({yourName, born, genre, genreCurrent, artist, song, stream, nonStream}) => 
 `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -108,11 +113,11 @@ const musicRender = ({yourName, born, genre, genreCurrent, artist, song, streami
     <h4>Favourite song from ${artist}:</h4>
     <p>${song} </p>
 
-    // <h4>What streaming service do you use?</h4>
-    // <p>${streaming}</p>
+    <h4>What streaming service do you use?</h4>
+    <p>${stream}</p>
     
-    // <h4>How do you listen to your music (i.e vinyl, cd etc..)</h4>
-    // <p>${nonStreaming}</p>
+    <h4>How do you listen to your music (i.e vinyl, cd etc..)</h4>
+    <p>${nonStream}</p>
     
     </body>
     </html>`
